@@ -1,0 +1,180 @@
+	;------------------ (1) parameter -----------------------; 
+(define nm 1e-3)
+(define Fw 0.004)
+(define Fh 0.1)
+(define Lg @Lg@)
+(define LSDC 0)
+(define LSD 0.04)
+(define Tox 0.3)
+(define x1 LSDC)
+(define x2 (+ x1 LSD))
+(define x3 (+ x2 Lg))
+(define x4 (+ x3 LSD))
+(define x5 (+ x4 LSDC))
+(define y1 Fw)
+(define y2 (+ y1 Tox))
+(define y3 (+ y2 0.01))
+(define z1 Fh)
+(define z2 (+ z1 Tox))
+(define C_Doping 1e17)
+(define SD_Doping @SD_Doping@)
+
+	; ----------------------- (2) Structure ----------------------; 
+"ABA"                                    
+;--- Source contact and Source ---; 
+
+;-- Gate oxide ---;
+(sdegeo:create-cuboid (position x2 0.008 0 ) (position (+ x3 0.03) 0.032 0.102 ) "HfO2" "Gateoxide")
+(sdegeo:create-cuboid (position x2 0.0095 0 ) (position (+ x3 0.03) 0.0305 0.1005 ) "SiO2" "Gateoxide")
+
+;--- Channel ---; 
+(sdegeo:create-cuboid (position (+ x2 0.005) 0.010 0 ) (position (+ x3 0.025) 0.030 0.1) "Silicon" "Channel")
+(sdegeo:create-cuboid (position (+ x2 0.010) 0.010 0 ) (position (+ x2 0.0125) 0.030 0.1) "Silicon" "Channel1")
+(sdegeo:create-cuboid (position (+ x3 0.0175) 0.010 0 ) (position (+ x3 0.020) 0.030 0.1) "Silicon" "Channel2")
+
+
+(sdegeo:create-cuboid (position x1 0.010 0 ) (position (+ x2 0.005) 0.030 0.1) "Silicon" "Source")
+
+
+;--- Drain contact and Drain---; 
+(sdegeo:create-cuboid (position (+ x3 0.025) 0.010 0 ) (position (+ x4 0.03) 0.030 0.1 ) "Silicon" "Drain")
+
+;--- sourceex and drainex---;
+(sdegeo:create-cuboid (position (+ x2 0.005) 0.010 0 ) (position (+ x2 0.0075) 0.030 0.1) "Silicon" "Sourceex1")
+
+(sdegeo:create-cuboid (position (+ x2 0.0075) 0.010 0 ) (position (+ x2 0.010) 0.030 0.1) "Silicon" "Sourceex2")
+
+
+(sdegeo:create-cuboid (position (+ x3 0.02) 0.010 0 ) (position (+ x3 0.0225) 0.030 0.1 ) "Silicon" "Drainex5")
+
+(sdegeo:create-cuboid (position (+ x3 0.0225) 0.010 0 ) (position (+ x3 0.025) 0.030 0.1 ) "Silicon" "Drainex6")
+
+
+;--- Buried oxide ---;
+(sdegeo:create-cuboid (position x1 -0.04 (- 0.05) ) (position (+ x4 0.03) 0.08 0 ) "SiO2" "Box")
+
+;Substrate
+(sdegeo:create-cuboid (position x1 -0.04 (- 0.1) ) (position (+ x4 0.03) 0.08 (- 0.05) ) "Silicon" "Substrate")
+
+"ABA"
+
+(sdegeo:set-default-boolean "BAB")
+
+
+
+(sdegeo:create-cuboid (position (+ x2 0.015)  -0.04 0 ) (position  (+ x3 0.015)  0.08  0.158 ) "TiNitride" "TiNitiride")
+
+
+(sdegeo:set-default-boolean "ABA")
+(sdegeo:set-default-boolean "BAB")
+
+(sdegeo:create-cuboid (position  (+ x3 0.0175) -0.035 0.005  ) (position (+ x3 0.0275) 0.075  0.153 ) "HfO2" "HfO2")
+(sdegeo:fillet (list (car (find-edge-id (position 0.1155 0.02 0.153)))) 0.015)
+
+(sdegeo:create-cuboid (position  (+ x3 0.015) -0.04 0  ) (position (+ x3 0.03) 0.08  0.158 ) "Si3N4" "Si3N4")
+(sdegeo:fillet (list (car (find-edge-id (position 0.118 0.02 0.158)))) 0.015)
+
+(sdegeo:create-cuboid (position  (+ x2 0.0025) -0.035 0.005 ) (position (+ x2 0.0125)  0.075  0.153 ) "HfO2" "HfO2")
+(sdegeo:fillet (list (car (find-edge-id (position 0.0425 0.02 0.153)))) 0.015)
+
+(sdegeo:create-cuboid (position  (+ x2 0.015) -0.04 0 ) (position x2  0.08  0.158 ) "Si3N4" "Si3N4")
+(sdegeo:fillet (list (car (find-edge-id (position 0.04 0.02 0.158)))) 0.015)
+
+(sdegeo:create-cuboid (position  x1 -0.04 0  ) (position (+ x4 0.03)  0.08  0.170 ) "Oxide" "Oxide")
+
+; --------------------- (3) Contact ------------------;
+
+(sdegeo:define-contact-set "S" 4  (color:rgb 1 0 0 ) "##")
+
+(sdegeo:define-contact-set "D" 4  (color:rgb 1 0 0 ) "##")
+
+(sdegeo:define-contact-set "B" 4  (color:rgb 1 0 0 ) "##")
+
+(sdegeo:define-contact-set "Sub" 4  (color:rgb 1 0 0 ) "##")
+
+(sdegeo:define-contact-set "G" 4  (color:rgb 1 0 0 ) "||")
+
+
+(sdegeo:define-3d-contact (list (car (find-face-id (position 0.14 0.02 0.1)))) "S")
+
+
+(sdegeo:define-3d-contact (list (car (find-face-id (position 0.02 0.02 0.1)))) "D")
+(sdegeo:define-3d-contact (list (car (find-face-id (position 0.061 0.02 0.158)))) "G")
+
+
+(sdegeo:define-3d-contact (list (car (find-face-id (position 0.061 0.02 -0.1)))) "Sub")
+
+; ------------------------ (4) Doping -------------------------; 
+
+;Substrate Doping
+(sdedr:define-constant-profile "dopingSub" "BoronActiveConcentration" 1e17)
+(sdedr:define-constant-profile-region "RegionSub" "dopingSub" "Substrate")
+
+;----- Channel -----; 
+(sdedr:define-constant-profile "dopedC" "BoronActiveConcentration" C_Doping )
+(sdedr:define-constant-profile-region "RegionC" "dopedC" "Channel" )
+(sdedr:define-constant-profile "dopedC1" "BoronActiveConcentration" C_Doping )
+(sdedr:define-constant-profile-region "RegionC1" "dopedC1" "Channel1" )
+(sdedr:define-constant-profile "dopedC2" "BoronActiveConcentration" C_Doping )
+(sdedr:define-constant-profile-region "RegionC2" "dopedC2" "Channel2" )
+
+;----- Source -----; 
+(sdedr:define-constant-profile "dopedS" "ArsenicActiveConcentration" SD_Doping )
+(sdedr:define-constant-profile-region "RegionS" "dopedS" "Source" )
+
+
+;----- Drain ------; 
+(sdedr:define-constant-profile "dopedD" "ArsenicActiveConcentration" SD_Doping )
+(sdedr:define-constant-profile-region "RegionD" "dopedD" "Drain" )
+
+
+;----- Sourceex ------; 
+(sdedr:define-constant-profile "dopedE" "ArsenicActiveConcentration" 1e20 )
+(sdedr:define-constant-profile-region "RegionE" "dopedE" "Sourceex1" )
+(sdedr:define-constant-profile "dopedF" "ArsenicActiveConcentration" 1e19 )
+(sdedr:define-constant-profile-region "RegionF" "dopedF" "Sourceex2" )
+
+;----- Drainex ------;
+
+(sdedr:define-constant-profile "dopedN" "ArsenicActiveConcentration" 1e19 )
+(sdedr:define-constant-profile-region "RegionN" "dopedN" "Drainex5" )
+(sdedr:define-constant-profile "dopedO" "ArsenicActiveConcentration" 1e20 )
+(sdedr:define-constant-profile-region "RegionO" "dopedO" "Drainex6" )
+
+; --------------------- (5) Mesh -----------------------; 
+
+(sdedr:define-refeval-window "RefEvalWin_1" "Cuboid" (position 0 -0.045 -0.3) (position 0.15 0.08 0.1))
+(sdedr:define-refinement-size "RefinementDefinition_1" 0.02 0.01 0.01 0.005 0.0051 0.005 )
+(sdedr:define-refinement-placement "RefinementPlacement_1" "RefinementDefinition_1" (list "window" "RefEvalWin_1" ) )
+
+(sdedr:define-refinement-size "So" 0.002 0.003 0.002 0.002 0.003 0.002)
+(sdedr:define-refinement-placement "So" "So" (list "region" "Sourceex2" ) )
+(sdedr:define-refinement-function "So" "DopingConcentration" "MaxTransDiff" 1)
+
+(sdedr:define-refinement-size "Dr" 0.002 0.003 0.002 0.002 0.003 0.002)
+(sdedr:define-refinement-placement "Dr" "Dr" (list "region" "Drainex5" ) )
+(sdedr:define-refinement-function "Dr" "DopingConcentration" "MaxTransDiff" 1)
+
+(sdedr:define-refinement-size "ch" 0.003 0.003 0.004 0.003 0.003 0.004)
+(sdedr:define-refinement-placement "ch" "ch" (list "region" "Channel" ) )
+(sdedr:define-refinement-function "ch" "DopingConcentration" "MaxTransDiff" 1)
+
+(sdedr:define-refinement-size "ch1" 0.0015 0.003 0.002 0.002 0.003 0.002)
+(sdedr:define-refinement-placement "ch1" "ch1" (list "region" "Channel1" ) )
+(sdedr:define-refinement-function "ch1" "DopingConcentration" "MaxTransDiff" 1)
+
+(sdedr:define-refinement-size "ch2" 0.0015 0.003 0.002 0.002 0.003 0.002)
+(sdedr:define-refinement-placement "ch2" "ch2" (list "region" "Channel2" ) )
+(sdedr:define-refinement-function "ch2" "DopingConcentration" "MaxTransDiff" 1)
+
+(sdedr:define-refeval-window "RefEvalWin_3" "Cuboid"  (position 0 -0.04 -0.15)  (position 0.15 0.1 0.16) )
+(sdedr:define-refinement-size "RefinementDefinition_1" 0.01 0.01 0.01 0.005 0.005 0.005 )
+(sdedr:define-refinement-placement "RefinementPlacement_1" "RefinementDefinition_1" (list "window" "RefEvalWin_3" ) )
+
+
+
+
+
+; ----------- (6) Save (BND and CMD and rescale to nm) -----------; 
+(sde:build-mesh "n@node@")
+; ------------------------------------------ END --------------------------------------------;
